@@ -6,13 +6,13 @@ from fpdf import FPDF
 # --- CONFIGURAÇÃO DO APP ---
 st.set_page_config(page_title="Escala Igreja", layout="wide", page_icon="🎵")
 
-# Inicialização da equipe
+# --- LISTA DEFINITIVA DA EQUIPE (ATUALIZADA) ---
 if 'equipe' not in st.session_state:
     st.session_state.equipe = {
-        "Som": ["Jessé", "Junior", "Paulo", "Marcelo"],
-        "Transmissão": ["Mel", "Arthur", "Pedro", "Junior", "Cláudia", "Jessé"],
-        "Mídia": ["Cláudia", "Sophia", "Gabriela", "Pedro", "Junior", "Jessé"],
-        "Equipe": ["Bruna", "Fernanda", "Junior", "Jovens"]
+        "Som": ["Marcelo", "Jessé", "Junior", "Paulo"],
+        "Transmissão": ["Mel", "Pedro", "Jessé", "Junior", "Arthur", "Cláudia"],
+        "Mídia": ["Cláudia", "Sophia", "Gabriela", "Pedro", "Jessé", "Junior"],
+        "Equipe": ["Bruna", "Junior", "Fernanda", "Cláudia", "Jovens"]
     }
 
 def com_opcao_vazia(lista):
@@ -21,7 +21,7 @@ def com_opcao_vazia(lista):
 # --- TÍTULO DO SISTEMA ---
 st.markdown("### 🎵 Escala Som | Mídia | Transmissão")
 
-# --- BARRA LATERAL ---
+# --- BARRA LATERAL (GERENCIAMENTO) ---
 with st.sidebar:
     st.header("⚙️ Gerenciar Equipe")
     cat_add = st.selectbox("Área para Adicionar", ["Som", "Transmissão", "Mídia", "Equipe"], key="add_cat")
@@ -81,6 +81,7 @@ if st.button("✅ Confirmar e Gerar Tabela"):
     col_w, col_p = st.columns(2)
 
     with col_w:
+        # WHATSAPP
         texto_whatsapp = f"🎵 *ESCALA SOM | MÍDIA | TRANSMISSÃO* 🎵\n\n"
         if e_geral != "-": texto_whatsapp += f"⭐ *Equipe:* {e_geral}\n\n"
         texto_whatsapp += f"📅 *Ensaio*\n- Som: {s_sex}\n\n"
@@ -91,7 +92,6 @@ if st.button("✅ Confirmar e Gerar Tabela"):
 
     with col_p:
         # --- PDF PERSONALIZADO (TAMANHO DA ESCALA) ---
-        # Definindo um tamanho menor: 150mm x 100mm (ideal para celular)
         pdf = FPDF(format=(150, 100))
         pdf.add_page()
         pdf.set_font("Arial", "B", 14)
@@ -106,7 +106,7 @@ if st.button("✅ Confirmar e Gerar Tabela"):
             pdf.cell(130, 8, equipe_txt, ln=True, align="C")
         pdf.ln(5)
         
-        # Tabela no PDF (larguras ajustadas para 130mm total)
+        # Cabeçalho da Tabela
         pdf.set_fill_color(230, 230, 230)
         pdf.set_font("Arial", "B", 9)
         cols_pdf = [("Período", 35), ("Som", 30), ("Mídia", 30), ("Transmissão", 35)]
@@ -116,6 +116,7 @@ if st.button("✅ Confirmar e Gerar Tabela"):
             pdf.cell(width, 8, txt, border=1, align="C", fill=True)
         pdf.ln()
 
+        # Dados da Tabela
         pdf.set_font("Arial", "", 9)
         for i in range(len(df)):
             pdf.cell(35, 8, str(df.iloc[i,0]).encode('latin-1', 'replace').decode('latin-1'), border=1, align="C")
