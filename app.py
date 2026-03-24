@@ -42,7 +42,7 @@ st.write("")
 
 c_tit, c_sel, c_vazio = st.columns([0.4, 0.4, 1.2])
 with c_tit:
-    st.markdown('<p style="font-size: 16px; font-weight: bold; margin-top: 10px;">🗓️ Equipe da Semana:</p>', unsafe_allow_html=True)
+    st.markdown('<p style="font-size: 16px; font-weight: bold; margin-top: 10px;">🗓️ Equipe:</p>', unsafe_allow_html=True)
 
 with c_sel:
     e_geral = st.selectbox("", com_opcao_vazia(st.session_state.equipe["Equipe"]), label_visibility="collapsed")
@@ -71,10 +71,10 @@ if st.button("✅ Confirmar e Gerar Tabela"):
         st.markdown(f"#### Equipe: **{e_geral}**")
         
     dados = {
-        "Período": ["Ensaio", "Dom. Manhã", "Dom. Noite"],
-        "Som": [s_sex, s_dom_m, s_dom_n],
-        "Transmissão": ["-", t_dom_m, t_dom_n],
-        "Mídia": ["-", m_dom_m, m_dom_n]
+        "Período": ["Ensaio", "Domingo. Manhã", "Domingo. Noite"],
+        "Som": [s_sex, s_domingo_m, s_domingo_n],
+        "Transmissão": ["-", t_domingo_m, t_domingo_n],
+        "Mídia": ["-", m_domingo_m, m_domingo_n]
     }
     df = pd.DataFrame(dados)
     st.table(df)
@@ -97,7 +97,7 @@ if st.button("✅ Confirmar e Gerar Tabela"):
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Arial", "B", 16)
-        pdf.cell(190, 10, "ESCALA DE LOUVOR E MIDIA", ln=True, align="C")
+        pdf.cell(190, 10, "ESCALA MíDIA|SOM|TRANSMISSÃO", ln=True, align="C")
         pdf.ln(5)
         if e_geral != "-":
             pdf.set_font("Arial", "B", 12)
@@ -107,7 +107,7 @@ if st.button("✅ Confirmar e Gerar Tabela"):
         # Cabeçalho da Tabela no PDF
         pdf.set_fill_color(200, 200, 200)
         pdf.set_font("Arial", "B", 10)
-        cols = ["Periodo", "Som", "Transm.", "Midia"]
+        cols = ["Período", "Som", "Transmissão.", "Mídia"]
         for col in cols:
             pdf.cell(47.5, 10, col, border=1, align="C", fill=True)
         pdf.ln()
