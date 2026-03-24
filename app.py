@@ -39,7 +39,7 @@ with st.sidebar:
 
 # --- MONTAGEM DA ESCALA ---
 st.write("") 
-c_tit, c_sel = st.columns([0.4, 0.6])
+c_tit, c_sel = st.columns([0.2, 0.3, 0.5])
 with c_tit:
     st.markdown('<p style="font-size: 16px; font-weight: bold; margin-top: 10px;">🗓️ Equipe:</p>', unsafe_allow_html=True)
 with c_sel:
