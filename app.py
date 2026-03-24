@@ -40,7 +40,7 @@ with st.sidebar:
 # --- MONTAGEM DA ESCALA ---
 st.write("") 
 
-# AJUSTE DE PROXIMIDADE: Colunas mais estreitas para o título e o seletor
+# Ajuste de Proximidade da Equipe
 c_tit, c_sel, c_espaco = st.columns([0.18, 0.25, 0.57])
 with c_tit:
     st.markdown('<p style="font-size: 16px; font-weight: bold; margin-top: 10px; white-space: nowrap;">🗓️ Equipe da Semana:</p>', unsafe_allow_html=True)
@@ -49,11 +49,11 @@ with c_sel:
 
 st.divider()
 
-# Layout de 4 colunas (Ensaio, Manhã, Noite, Evento)
+# Layout de 4 colunas
 c1, c2, c3, c4 = st.columns(4)
 with c1:
     st.info("📅 Ensaio")
-    s_sex = st.selectbox("Som", com_opcao_vazia(st.session_state.equipe["Som"]), key="s_sex_val")
+    s_ens = st.selectbox("Som", com_opcao_vazia(st.session_state.equipe["Som"]), key="s_ens_val")
 with c2:
     st.success("☀️ Domingo Manhã")
     s_dom_m = st.selectbox("Som", com_opcao_vazia(st.session_state.equipe["Som"]), key="sm_val")
@@ -78,7 +78,7 @@ if st.button("✅ Confirmar e Gerar Tabela"):
         
     dados = {
         "Período": ["Ensaio", "Domingo Manhã", "Domingo Noite", "Evento"],
-        "Som": [s_sex, s_dom_m, s_dom_n, s_evt],
+        "Som": [s_ens, s_dom_m, s_dom_n, s_evt],
         "Transmissão": ["-", t_dom_m, t_dom_n, t_evt],
         "Mídia": ["-", m_dom_m, m_dom_n, m_evt]
     }
@@ -89,13 +89,15 @@ if st.button("✅ Confirmar e Gerar Tabela"):
     col_w, col_p = st.columns(2)
 
     with col_w:
-        texto_whatsapp = f"🎵 *ESCALA SOM | MÍDIA | TRANSMISSÃO* 🎵\n\n"
-        if e_geral != "-": texto_whatsapp += f"⭐ *Equipe:* {e_geral}\n\n"
-        texto_whatsapp += f"📅 *Ensaio*\n- Som: {s_sex}\n\n"
-        texto_whatsapp += f"☀️ *Domingo Manhã*\n- Som: {s_dom_m}\n- Transmissão: {t_dom_m}\n- Mídia: {m_dom_m}\n\n"
-        texto_whatsapp += f"🌙 *Domingo Noite*\n- Som: {s_dom_n}\n- Transmissão: {t_dom_n}\n- Mídia: {m_dom_n}\n\n"
-        texto_whatsapp += f"✨ *Evento*\n- Som: {s_evt}\n- Transmissão: {t_evt}\n- Mídia: {m_evt}"
-        link_zap = f"https://wa.me/?text={urllib.parse.quote(texto_whatsapp)}"
+        # WHATSAPP (Texto limpo para evitar símbolos estranhos)
+        txt = "ESCALA SOM | MIDIA | TRANSMISSAO\n\n"
+        if e_geral != "-": txt += f"Equipe: {e_geral}\n\n"
+        txt += f"ENSAIO\n- Som: {s_ens}\n\n"
+        txt += f"DOMINGO MANHA\n- Som: {s_dom_m}\n- Transmissao: {t_dom_m}\n- Midia: {m_dom_m}\n\n"
+        txt += f"DOMINGO NOITE\n- Som: {s_dom_n}\n- Transmissao: {t_dom_n}\n- Midia: {m_dom_n}\n\n"
+        txt += f"EVENTO\n- Som: {s_evt}\n- Transmissao: {t_evt}\n- Midia: {m_evt}"
+        
+        link_zap = f"https://wa.me/?text={urllib.parse.quote(txt)}"
         st.markdown(f'<a href="{link_zap}" target="_blank"><button style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;">📲 Enviar WhatsApp</button></a>', unsafe_allow_html=True)
 
     with col_p:
@@ -104,7 +106,7 @@ if st.button("✅ Confirmar e Gerar Tabela"):
         pdf.add_page()
         pdf.set_font("Arial", "B", 14)
         
-        titulo_pdf = "ESCALA SOM | MÍDIA | TRANSMISSÃO".encode('latin-1', 'replace').decode('latin-1')
+        titulo_pdf = "ESCALA SOM | MIDIA | TRANSMISSAO".encode('latin-1', 'replace').decode('latin-1')
         pdf.cell(130, 8, titulo_pdf, ln=True, align="C")
         
         pdf.ln(3)
@@ -117,11 +119,11 @@ if st.button("✅ Confirmar e Gerar Tabela"):
         # Cabeçalho da Tabela
         pdf.set_fill_color(230, 230, 230)
         pdf.set_font("Arial", "B", 9)
-        cols_pdf = [("Período", 35), ("Som", 30), ("Mídia", 30), ("Transmissão", 35)]
+        cols_pdf = [("Periodo", 35), ("Som", 30), ("Midia", 30), ("Transmissao", 35)]
         
         for col_name, width in cols_pdf:
-            txt = col_name.encode('latin-1', 'replace').decode('latin-1')
-            pdf.cell(width, 8, txt, border=1, align="C", fill=True)
+            txt_col = col_name.encode('latin-1', 'replace').decode('latin-1')
+            pdf.cell(width, 8, txt_col, border=1, align="C", fill=True)
         pdf.ln()
 
         # Dados da Tabela
@@ -129,15 +131,4 @@ if st.button("✅ Confirmar e Gerar Tabela"):
         for i in range(len(df)):
             pdf.cell(35, 8, str(df.iloc[i,0]).encode('latin-1', 'replace').decode('latin-1'), border=1, align="C")
             pdf.cell(30, 8, str(df.iloc[i,1]).encode('latin-1', 'replace').decode('latin-1'), border=1, align="C")
-            pdf.cell(30, 8, str(df.iloc[i,3]).encode('latin-1', 'replace').decode('latin-1'), border=1, align="C")
-            pdf.cell(35, 8, str(df.iloc[i,2]).encode('latin-1', 'replace').decode('latin-1'), border=1, align="C")
-            pdf.ln()
-
-        pdf_bin = pdf.output(dest='S').encode('latin-1', 'replace')
-        st.download_button(
-            label="💾 Baixar Escala (PDF)",
-            data=pdf_bin,
-            file_name=f"Escala_{e_geral}.pdf",
-            mime="application/pdf",
-            use_container_width=True
-        )
+            pdf.cell(30
