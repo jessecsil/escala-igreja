@@ -77,32 +77,36 @@ if st.button("✅ Confirmar e Gerar Tabela"):
         {"Período": "Evento", "Som": s_ev, "Transmissão": t_ev, "Mídia": m_ev}
     ]
     
-    # Filtro: Remove linhas onde ninguém foi escalado
     filtrados = [d for d in dados if d["Som"] != "-" or d["Transmissão"] != "-" or d["Mídia"] != "-"]
     
     if filtrados:
         df = pd.DataFrame(filtrados)
-        st.table(df) # Aqui os acentos aparecerão normal na tela
+        st.table(df)
 
         st.write("---")
         col_w, col_p = st.columns(2)
 
         with col_w:
-            # WHATSAPP COM ACENTOS
-            txt = "🎵 *ESCALA SOM | MÍDIA | TRANSMISSÃO* 🎵\n\n"
-            if e_geral != "-": txt += f"⭐ *Equipe:* {e_geral}\n\n"
+            # WHATSAPP: Removi os emojis complexos do início para evitar a "?" 
+            # Usei apenas símbolos básicos que o WhatsApp entende 100%
+            txt = "*ESCALA SOM | MIDIA | TRANSMISSAO*\n\n"
+            if e_geral != "-": txt += f"Equipe: *{e_geral}*\n\n"
+            
             for item in filtrados:
-                txt += f"📍 *{item['Período'].upper()}*\n"
-                if item['Som'] != "-": txt += f"• Som: {item['Som']}\n"
-                if item['Transmissão'] != "-": txt += f"• Transmissão: {item['Transmissão']}\n"
-                if item['Mídia'] != "-": txt += f"• Mídia: {item['Mídia']}\n"
+                # Removemos o acento apenas na variável do texto do WhatsApp para garantir
+                periodo_limpo = item['Período'].replace("ã", "a").replace("í", "i")
+                txt += f"*{periodo_limpo.upper()}*\n"
+                if item['Som'] != "-": txt += f"  Som: {item['Som']}\n"
+                if item['Transmissão'] != "-": txt += f"  Transmissao: {item['Transmissão']}\n"
+                if item['Mídia'] != "-": txt += f"  Midia: {item['Mídia']}\n"
                 txt += "\n"
             
-            link = f"https://wa.me/?text={urllib.parse.quote(txt)}"
+            # Codificação segura
+            link = f"https://wa.me/?text={urllib.parse.quote(txt.encode('utf-8'))}"
             st.markdown(f'<a href="{link}" target="_blank"><button style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; width: 100%;">📲 Enviar WhatsApp</button></a>', unsafe_allow_html=True)
 
         with col_p:
-            # PDF COM CORREÇÃO DE ACENTOS (Utilizando windows-1252 para PDF clássico)
+            # PDF (Mantido com correção para acentos)
             pdf = FPDF(format=(150, 110))
             pdf.add_page()
             pdf.set_font("Arial", "B", 14)
@@ -127,8 +131,4 @@ if st.button("✅ Confirmar e Gerar Tabela"):
             for _, row in df.iterrows():
                 pdf.cell(35, 8, fix_txt(row['Período']), 1, 0, "C")
                 pdf.cell(30, 8, fix_txt(row['Som']), 1, 0, "C")
-                pdf.cell(30, 8, fix_txt(row['Mídia']), 1, 0, "C")
-                pdf.cell(35, 8, fix_txt(row['Transmissão']), 1, 1, "C")
-
-            pdf_bin = pdf.output(dest='S').encode('latin-1', 'replace')
-            st.download_button("💾 Baixar PDF", pdf_bin, f"Escala_{e_geral}.pdf", "application/pdf", use_container_width=True)
+                pdf.cell(30, 8, fix_txt(row['Mídia']), 1, 0
