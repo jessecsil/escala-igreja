@@ -12,7 +12,7 @@ if 'equipe' not in st.session_state:
         "Som": ["Marcelo", "Jessé", "Junior", "Paulo"],
         "Transmissão": ["Mel", "Pedro", "Jessé", "Junior", "Arthur", "Cláudia"],
         "Mídia": ["Cláudia", "Sophia", "Gabriela", "Pedro", "Jessé", "Junior"],
-        "Equipe": ["Bruna", "Junior", "Fernanda", "Cláudia", "Jovens"]
+        "Equipe": ["Bruna", "Junior", "Fernanda", "Cláudia", "Cássio", "Manu", "Sofia", "Jovens"]
     }
 
 def com_opcao_vazia(lista):
