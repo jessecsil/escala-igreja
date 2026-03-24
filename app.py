@@ -19,7 +19,7 @@ def com_opcao_vazia(lista):
     return ["-"] + lista
 
 # --- TÍTULO DO SISTEMA ---
-st.markdown("### 🎵 Sistema de Escala - Som | Transmissão | Mídia")
+st.markdown("### 🎵 Escala Som | Mídia | Transmissão")
 
 # --- BARRA LATERAL (GERENCIAMENTO) ---
 with st.sidebar:
@@ -70,7 +70,6 @@ if st.button("✅ Confirmar e Gerar Tabela"):
     if e_geral != "-":
         st.markdown(f"#### Equipe: **{e_geral}**")
         
-    # Dados da tabela SEM abreviações
     dados = {
         "Período": ["Ensaio", "Domingo Manhã", "Domingo Noite"],
         "Som": [s_sex, s_dom_m, s_dom_n],
@@ -85,7 +84,7 @@ if st.button("✅ Confirmar e Gerar Tabela"):
 
     with col_w:
         # WHATSAPP
-        texto_whatsapp = f"🎵 *ESCALA MÍDIA E SOM* 🎵\n\n"
+        texto_whatsapp = f"🎵 *ESCALA SOM | MÍDIA | TRANSMISSÃO* 🎵\n\n"
         if e_geral != "-": texto_whatsapp += f"⭐ *Equipe:* {e_geral}\n\n"
         texto_whatsapp += f"📅 *Ensaio*\n- Som: {s_sex}\n\n"
         texto_whatsapp += f"☀️ *Domingo Manhã*\n- Som: {s_dom_m}\n- Transmissão: {t_dom_m}\n- Mídia: {m_dom_m}\n\n"
@@ -94,40 +93,30 @@ if st.button("✅ Confirmar e Gerar Tabela"):
         st.markdown(f'<a href="{link_zap}" target="_blank"><button style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;">📲 Enviar WhatsApp</button></a>', unsafe_allow_html=True)
 
     with col_p:
-        # GERAR PDF SEM ABREVIAÇÕES
+        # GERAR PDF
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Arial", "B", 16)
-        pdf.cell(190, 10, "ESCALA DE LOUVOR E MIDIA", ln=True, align="C")
+        # Título do PDF atualizado
+        pdf.cell(190, 10, "ESCALA SOM | MIDIA | TRANSMISSAO".encode('latin-1', 'replace').decode('latin-1'), ln=True, align="C")
         pdf.ln(5)
         if e_geral != "-":
             pdf.set_font("Arial", "B", 12)
-            pdf.cell(190, 10, f"Equipe: {e_geral}", ln=True, align="C")
+            pdf.cell(190, 10, f"Equipe: {e_geral}".encode('latin-1', 'replace').decode('latin-1'), ln=True, align="C")
         pdf.ln(10)
         
         # Cabeçalho da Tabela
         pdf.set_fill_color(200, 200, 200)
         pdf.set_font("Arial", "B", 10)
-        pdf.cell(47.5, 10, "Periodo", border=1, align="C", fill=True)
+        pdf.cell(47.5, 10, "Período".encode('latin-1', 'replace').decode('latin-1'), border=1, align="C", fill=True)
         pdf.cell(47.5, 10, "Som", border=1, align="C", fill=True)
-        pdf.cell(47.5, 10, "Transmissao", border=1, align="C", fill=True)
-        pdf.cell(47.5, 10, "Midia", border=1, align="C", fill=True)
+        pdf.cell(47.5, 10, "Mídia".encode('latin-1', 'replace').decode('latin-1'), border=1, align="C", fill=True)
+        pdf.cell(47.5, 10, "Transmissão".encode('latin-1', 'replace').decode('latin-1'), border=1, align="C", fill=True)
         pdf.ln()
 
-        # Dados da Tabela
+        # Dados da Tabela (Ajustando a ordem das colunas no PDF também)
         pdf.set_font("Arial", "", 10)
         for i in range(len(df)):
-            pdf.cell(47.5, 10, str(df.iloc[i,0]), border=1, align="C")
-            pdf.cell(47.5, 10, str(df.iloc[i,1]), border=1, align="C")
-            pdf.cell(47.5, 10, str(df.iloc[i,2]), border=1, align="C")
-            pdf.cell(47.5, 10, str(df.iloc[i,3]), border=1, align="C")
-            pdf.ln()
-
-        pdf_bin = pdf.output(dest='S').encode('latin-1')
-        st.download_button(
-            label="💾 Baixar Escala (PDF)",
-            data=pdf_bin,
-            file_name=f"Escala_{e_geral}.pdf",
-            mime="application/pdf",
-            use_container_width=True
-        )
+            pdf.cell(47.5, 10, str(df.iloc[i,0]).encode('latin-1', 'replace').decode('latin-1'), border=1, align="C") # Período
+            pdf.cell(47.5, 10, str(df.iloc[i,1]).encode('latin-1', 'replace').decode('latin-1'), border=1, align="C") # Som
+            pdf.cell(47.5, 10, str(df.iloc[i,3]).encode('latin-1',
