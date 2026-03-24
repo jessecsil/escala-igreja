@@ -42,7 +42,7 @@ st.write("")
 
 c_tit, c_sel, c_vazio = st.columns([0.4, 0.4, 1.2])
 with c_tit:
-    st.markdown('<p style="font-size: 16px; font-weight: bold; margin-top: 10px;">🗓️ Equipe:</p>', unsafe_allow_html=True)
+    st.markdown('<p style="font-size: 16px; font-weight: bold; margin-top: 10px;">🗓️ Equipe da Semana:</p>', unsafe_allow_html=True)
 
 with c_sel:
     e_geral = st.selectbox("", com_opcao_vazia(st.session_state.equipe["Equipe"]), label_visibility="collapsed")
@@ -52,17 +52,17 @@ st.divider()
 c1, c2, c3 = st.columns(3)
 with c1:
     st.info("📅 Ensaio")
-    s_sex = st.selectbox("Som", com_opcao_vazia(st.session_state.equipe["Som"]), key="s_sex")
+    s_sex = st.selectbox("Som", com_opcao_vazia(st.session_state.equipe["Som"]), key="s_sex_val")
 with c2:
     st.success("☀️ Domingo Manhã")
-    s_dom_m = st.selectbox("Som", com_opcao_vazia(st.session_state.equipe["Som"]), key="sm")
-    t_dom_m = st.selectbox("Transmissão", com_opcao_vazia(st.session_state.equipe["Transmissão"]), key="tm")
-    m_dom_m = st.selectbox("Mídia", com_opcao_vazia(st.session_state.equipe["Mídia"]), key="mm")
+    s_dom_m = st.selectbox("Som", com_opcao_vazia(st.session_state.equipe["Som"]), key="sm_val")
+    t_dom_m = st.selectbox("Transmissão", com_opcao_vazia(st.session_state.equipe["Transmissão"]), key="tm_val")
+    m_dom_m = st.selectbox("Mídia", com_opcao_vazia(st.session_state.equipe["Mídia"]), key="mm_val")
 with c3:
     st.success("🌙 Domingo Noite")
-    s_dom_n = st.selectbox("Som", com_opcao_vazia(st.session_state.equipe["Som"]), key="sn")
-    t_dom_n = st.selectbox("Transmissão", com_opcao_vazia(st.session_state.equipe["Transmissão"]), key="tn")
-    m_dom_n = st.selectbox("Mídia", com_opcao_vazia(st.session_state.equipe["Mídia"]), key="mn")
+    s_dom_n = st.selectbox("Som", com_opcao_vazia(st.session_state.equipe["Som"]), key="sn_val")
+    t_dom_n = st.selectbox("Transmissão", com_opcao_vazia(st.session_state.equipe["Transmissão"]), key="tn_val")
+    m_dom_n = st.selectbox("Mídia", com_opcao_vazia(st.session_state.equipe["Mídia"]), key="mn_val")
 
 # --- GERAÇÃO DA TABELA E AÇÕES ---
 st.divider()
@@ -70,11 +70,12 @@ if st.button("✅ Confirmar e Gerar Tabela"):
     if e_geral != "-":
         st.markdown(f"#### Equipe: **{e_geral}**")
         
+    # Dados da tabela usando as variáveis corretas
     dados = {
-        "Período": ["Ensaio", "Domingo. Manhã", "Domingo. Noite"],
-        "Som": [s_sex, s_domingo_m, s_domingo_n],
-        "Transmissão": ["-", t_domingo_m, t_domingo_n],
-        "Mídia": ["-", m_domingo_m, m_domingo_n]
+        "Período": ["Ensaio", "Dom. Manhã", "Dom. Noite"],
+        "Som": [s_sex, s_dom_m, s_dom_n],
+        "Transmissão": ["-", t_dom_m, t_dom_n],
+        "Mídia": ["-", m_dom_m, m_dom_n]
     }
     df = pd.DataFrame(dados)
     st.table(df)
@@ -97,22 +98,23 @@ if st.button("✅ Confirmar e Gerar Tabela"):
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Arial", "B", 16)
-        pdf.cell(190, 10, "ESCALA MíDIA|SOM|TRANSMISSÃO", ln=True, align="C")
+        pdf.cell(190, 10, "ESCALA DE LOUVOR E MIDIA", ln=True, align="C")
         pdf.ln(5)
         if e_geral != "-":
             pdf.set_font("Arial", "B", 12)
             pdf.cell(190, 10, f"Equipe: {e_geral}", ln=True, align="C")
         pdf.ln(10)
         
-        # Cabeçalho da Tabela no PDF
+        # Cabeçalho da Tabela
         pdf.set_fill_color(200, 200, 200)
         pdf.set_font("Arial", "B", 10)
-        cols = ["Período", "Som", "Transmissão.", "Mídia"]
-        for col in cols:
-            pdf.cell(47.5, 10, col, border=1, align="C", fill=True)
+        pdf.cell(47.5, 10, "Periodo", border=1, align="C", fill=True)
+        pdf.cell(47.5, 10, "Som", border=1, align="C", fill=True)
+        pdf.cell(47.5, 10, "Transm.", border=1, align="C", fill=True)
+        pdf.cell(47.5, 10, "Midia", border=1, align="C", fill=True)
         pdf.ln()
 
-        # Dados da Tabela no PDF
+        # Dados da Tabela
         pdf.set_font("Arial", "", 10)
         for i in range(len(df)):
             pdf.cell(47.5, 10, str(df.iloc[i,0]), border=1, align="C")
@@ -121,10 +123,11 @@ if st.button("✅ Confirmar e Gerar Tabela"):
             pdf.cell(47.5, 10, str(df.iloc[i,3]), border=1, align="C")
             pdf.ln()
 
-        pdf_output = pdf.output(dest='S').encode('latin-1')
+        # O PDF precisa ser gerado como string binária
+        pdf_bin = pdf.output(dest='S').encode('latin-1')
         st.download_button(
             label="💾 Baixar Escala (PDF)",
-            data=pdf_output,
+            data=pdf_bin,
             file_name=f"Escala_{e_geral}.pdf",
             mime="application/pdf",
             use_container_width=True
