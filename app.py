@@ -39,7 +39,7 @@ with st.sidebar:
 
 # --- MONTAGEM DA ESCALA ---
 st.write("") 
-c_tit, c_sel, c_vazio = st.columns([0.4, 0.4, 1.2])
+c_tit, c_sel = st.columns([0.4, 0.6])
 with c_tit:
     st.markdown('<p style="font-size: 16px; font-weight: bold; margin-top: 10px;">🗓️ Equipe da Semana:</p>', unsafe_allow_html=True)
 with c_sel:
@@ -47,7 +47,8 @@ with c_sel:
 
 st.divider()
 
-c1, c2, c3 = st.columns(3)
+# Ajustei para 4 colunas agora
+c1, c2, c3, c4 = st.columns(4)
 with c1:
     st.info("📅 Ensaio")
     s_sex = st.selectbox("Som", com_opcao_vazia(st.session_state.equipe["Som"]), key="s_sex_val")
@@ -61,6 +62,11 @@ with c3:
     s_dom_n = st.selectbox("Som", com_opcao_vazia(st.session_state.equipe["Som"]), key="sn_val")
     t_dom_n = st.selectbox("Transmissão", com_opcao_vazia(st.session_state.equipe["Transmissão"]), key="tn_val")
     m_dom_n = st.selectbox("Mídia", com_opcao_vazia(st.session_state.equipe["Mídia"]), key="mn_val")
+with c4:
+    st.warning("✨ Evento")
+    s_evt = st.selectbox("Som", com_opcao_vazia(st.session_state.equipe["Som"]), key="se_val")
+    t_evt = st.selectbox("Transmissão", com_opcao_vazia(st.session_state.equipe["Transmissão"]), key="te_val")
+    m_evt = st.selectbox("Mídia", com_opcao_vazia(st.session_state.equipe["Mídia"]), key="me_val")
 
 # --- GERAÇÃO DA TABELA E AÇÕES ---
 st.divider()
@@ -69,10 +75,10 @@ if st.button("✅ Confirmar e Gerar Tabela"):
         st.markdown(f"#### Equipe: **{e_geral}**")
         
     dados = {
-        "Período": ["Ensaio", "Domingo Manhã", "Domingo Noite"],
-        "Som": [s_sex, s_dom_m, s_dom_n],
-        "Transmissão": ["-", t_dom_m, t_dom_n],
-        "Mídia": ["-", m_dom_m, m_dom_n]
+        "Período": ["Ensaio", "Domingo Manhã", "Domingo Noite", "Evento"],
+        "Som": [s_sex, s_dom_m, s_dom_n, s_evt],
+        "Transmissão": ["-", t_dom_m, t_dom_n, t_evt],
+        "Mídia": ["-", m_dom_m, m_dom_n, m_evt]
     }
     df = pd.DataFrame(dados)
     st.table(df)
@@ -81,18 +87,19 @@ if st.button("✅ Confirmar e Gerar Tabela"):
     col_w, col_p = st.columns(2)
 
     with col_w:
-        # WHATSAPP
+        # WHATSAPP ATUALIZADO
         texto_whatsapp = f"🎵 *ESCALA SOM | MÍDIA | TRANSMISSÃO* 🎵\n\n"
         if e_geral != "-": texto_whatsapp += f"⭐ *Equipe:* {e_geral}\n\n"
         texto_whatsapp += f"📅 *Ensaio*\n- Som: {s_sex}\n\n"
         texto_whatsapp += f"☀️ *Domingo Manhã*\n- Som: {s_dom_m}\n- Transmissão: {t_dom_m}\n- Mídia: {m_dom_m}\n\n"
-        texto_whatsapp += f"🌙 *Domingo Noite*\n- Som: {s_dom_n}\n- Transmissão: {t_dom_n}\n- Mídia: {m_dom_n}"
+        texto_whatsapp += f"🌙 *Domingo Noite*\n- Som: {s_dom_n}\n- Transmissão: {t_dom_n}\n- Mídia: {m_dom_n}\n\n"
+        texto_whatsapp += f"✨ *Evento*\n- Som: {s_evt}\n- Transmissão: {t_evt}\n- Mídia: {m_evt}"
         link_zap = f"https://wa.me/?text={urllib.parse.quote(texto_whatsapp)}"
         st.markdown(f'<a href="{link_zap}" target="_blank"><button style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;">📲 Enviar WhatsApp</button></a>', unsafe_allow_html=True)
 
     with col_p:
-        # --- PDF PERSONALIZADO (TAMANHO DA ESCALA) ---
-        pdf = FPDF(format=(150, 100))
+        # --- PDF PERSONALIZADO (Ajustado para 4 linhas de dados) ---
+        pdf = FPDF(format=(150, 110)) # Aumentei um pouco a altura para caber a nova linha
         pdf.add_page()
         pdf.set_font("Arial", "B", 14)
         
@@ -116,7 +123,7 @@ if st.button("✅ Confirmar e Gerar Tabela"):
             pdf.cell(width, 8, txt, border=1, align="C", fill=True)
         pdf.ln()
 
-        # Dados da Tabela
+        # Dados da Tabela no PDF (Agora com 4 linhas)
         pdf.set_font("Arial", "", 9)
         for i in range(len(df)):
             pdf.cell(35, 8, str(df.iloc[i,0]).encode('latin-1', 'replace').decode('latin-1'), border=1, align="C")
