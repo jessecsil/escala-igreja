@@ -70,9 +70,9 @@ if st.button("✅ Confirmar e Gerar Tabela"):
     if e_geral != "-":
         st.markdown(f"#### Equipe: **{e_geral}**")
         
-    # Dados da tabela usando as variáveis corretas
+    # Dados da tabela SEM abreviações
     dados = {
-        "Período": ["Ensaio", "Dom. Manhã", "Dom. Noite"],
+        "Período": ["Ensaio", "Domingo Manhã", "Domingo Noite"],
         "Som": [s_sex, s_dom_m, s_dom_n],
         "Transmissão": ["-", t_dom_m, t_dom_n],
         "Mídia": ["-", m_dom_m, m_dom_n]
@@ -94,7 +94,7 @@ if st.button("✅ Confirmar e Gerar Tabela"):
         st.markdown(f'<a href="{link_zap}" target="_blank"><button style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;">📲 Enviar WhatsApp</button></a>', unsafe_allow_html=True)
 
     with col_p:
-        # GERAR PDF
+        # GERAR PDF SEM ABREVIAÇÕES
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Arial", "B", 16)
@@ -110,7 +110,7 @@ if st.button("✅ Confirmar e Gerar Tabela"):
         pdf.set_font("Arial", "B", 10)
         pdf.cell(47.5, 10, "Periodo", border=1, align="C", fill=True)
         pdf.cell(47.5, 10, "Som", border=1, align="C", fill=True)
-        pdf.cell(47.5, 10, "Transm.", border=1, align="C", fill=True)
+        pdf.cell(47.5, 10, "Transmissao", border=1, align="C", fill=True)
         pdf.cell(47.5, 10, "Midia", border=1, align="C", fill=True)
         pdf.ln()
 
@@ -123,7 +123,6 @@ if st.button("✅ Confirmar e Gerar Tabela"):
             pdf.cell(47.5, 10, str(df.iloc[i,3]), border=1, align="C")
             pdf.ln()
 
-        # O PDF precisa ser gerado como string binária
         pdf_bin = pdf.output(dest='S').encode('latin-1')
         st.download_button(
             label="💾 Baixar Escala (PDF)",
