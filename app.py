@@ -41,7 +41,7 @@ with st.sidebar:
 st.write("") 
 c_tit, c_sel = st.columns([0.4, 0.6])
 with c_tit:
-    st.markdown('<p style="font-size: 16px; font-weight: bold; margin-top: 10px;">🗓️ Equipe da Semana:</p>', unsafe_allow_html=True)
+    st.markdown('<p style="font-size: 16px; font-weight: bold; margin-top: 10px;">🗓️ Equipe:</p>', unsafe_allow_html=True)
 with c_sel:
     e_geral = st.selectbox("", com_opcao_vazia(st.session_state.equipe["Equipe"]), label_visibility="collapsed")
 
