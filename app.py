@@ -92,29 +92,24 @@ if st.button("✅ Confirmar e Gerar Tabela"):
     df = pd.DataFrame(dados)
     st.table(df)
 
-    # --- BOTÕES DE AÇÃO (WHATSAPP E DOWNLOAD) ---
-    col_w, col_d = st.columns([1, 1])
+    st.write("---")
+    # Colunas para botões de ação
+    col_w, col_d = st.columns(2)
 
     with col_w:
-        # WhatsApp
+        # Link do WhatsApp
         texto_whatsapp = f"🎵 *ESCALA MÍDIA E SOM* 🎵\n\n"
         if e_geral != "-":
             texto_whatsapp += f"⭐ *Equipe:* {e_geral}\n\n"
         texto_whatsapp += f"📅 *Ensaio*\n- Som: {s_sex}\n\n"
         texto_whatsapp += f"☀️ *Domingo Manhã*\n- Som: {s_dom_m}\n- Transmissão: {t_dom_m}\n- Mídia: {m_dom_m}\n\n"
         texto_whatsapp += f"🌙 *Domingo Noite*\n- Som: {s_dom_n}\n- Transmissão: {t_dom_n}\n- Mídia: {m_dom_n}"
-
+        
         link_zap = f"https://wa.me/?text={urllib.parse.quote(texto_whatsapp)}"
-        st.markdown(f"""
-            <a href="{link_zap}" target="_blank">
-                <button style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;">
-                    📲 Enviar para WhatsApp
-                </button>
-            </a>
-        """, unsafe_allow_html=True)
+        st.markdown(f'<a href="{link_zap}" target="_blank"><button style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;">📲 Enviar para WhatsApp</button></a>', unsafe_allow_html=True)
 
     with col_d:
-        # Download Excel
+        # Download do Excel
         output = BytesIO()
         with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
             df.to_excel(writer, index=False, sheet_name='Escala')
@@ -122,6 +117,7 @@ if st.button("✅ Confirmar e Gerar Tabela"):
         st.download_button(
             label="💾 Baixar Escala (Excel)",
             data=output.getvalue(),
-            file_name=f"Escala_{e_geral}.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            file_name=f"Escala_{e_geral if e_geral != '-' else 'Igreja'}.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            use_container_width=True
         )
