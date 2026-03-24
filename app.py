@@ -131,4 +131,15 @@ if st.button("✅ Confirmar e Gerar Tabela"):
         for i in range(len(df)):
             pdf.cell(35, 8, str(df.iloc[i,0]).encode('latin-1', 'replace').decode('latin-1'), border=1, align="C")
             pdf.cell(30, 8, str(df.iloc[i,1]).encode('latin-1', 'replace').decode('latin-1'), border=1, align="C")
-            pdf.cell(30
+            pdf.cell(30, 8, str(df.iloc[i,3]).encode('latin-1', 'replace').decode('latin-1'), border=1, align="C")
+            pdf.cell(35, 8, str(df.iloc[i,2]).encode('latin-1', 'replace').decode('latin-1'), border=1, align="C")
+            pdf.ln()
+
+        pdf_bin = pdf.output(dest='S').encode('latin-1', 'replace')
+        st.download_button(
+            label="💾 Baixar Escala (PDF)",
+            data=pdf_bin,
+            file_name=f"Escala_{e_geral}.pdf",
+            mime="application/pdf",
+            use_container_width=True
+        )
