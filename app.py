@@ -131,4 +131,8 @@ if st.button("✅ Confirmar e Gerar Tabela"):
             for _, row in df.iterrows():
                 pdf.cell(35, 8, fix_txt(row['Período']), 1, 0, "C")
                 pdf.cell(30, 8, fix_txt(row['Som']), 1, 0, "C")
-                pdf.cell(30, 8, fix_txt(row['Mídia']), 1, 0
+                pdf.cell(30, 8, fix_txt(row['Mídia']), 1, 0, "C")
+                pdf.cell(35, 8, fix_txt(row['Transmissão']), 1, 1, "C")
+
+            pdf_bin = pdf.output(dest='S').encode('latin-1', 'replace')
+            st.download_button("💾 Baixar PDF", pdf_bin, f"Escala_{e_geral}.pdf", "application/pdf", use_container_width=True)
