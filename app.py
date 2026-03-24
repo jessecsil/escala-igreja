@@ -11,7 +11,7 @@ if 'equipe' not in st.session_state:
     st.session_state.equipe = {
         "Som": ["Marcelo", "Jessé", "Junior", "Paulo"],
         "Transmissão": ["Mel", "Pedro", "Jessé", "Junior", "Arthur", "Cláudia"],
-        "Mídia": ["Cláudia", "Sophia", "Gabriela", "Pedro", "Jessé", "Junior"],
+        "Mídia": ["Cláudia", "Sofia", "Gabriela", "Pedro", "Jessé", "Junior"],
         "Equipe": ["Bruna", "Junior", "Fernanda", "Cláudia", "Cássio", "Manu", "Sofia", "Jovens"]
     }
 
