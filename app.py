@@ -21,7 +21,7 @@ def com_opcao_vazia(lista):
 # --- TÍTULO DO SISTEMA ---
 st.markdown("### 🎵 Escala Som | Mídia | Transmissão")
 
-# --- BARRA LATERAL (GERENCIAMENTO) ---
+# --- BARRA LATERAL ---
 with st.sidebar:
     st.header("⚙️ Gerenciar Equipe")
     cat_add = st.selectbox("Área para Adicionar", ["Som", "Transmissão", "Mídia", "Equipe"], key="add_cat")
@@ -39,11 +39,9 @@ with st.sidebar:
 
 # --- MONTAGEM DA ESCALA ---
 st.write("") 
-
 c_tit, c_sel, c_vazio = st.columns([0.4, 0.4, 1.2])
 with c_tit:
     st.markdown('<p style="font-size: 16px; font-weight: bold; margin-top: 10px;">🗓️ Equipe da Semana:</p>', unsafe_allow_html=True)
-
 with c_sel:
     e_geral = st.selectbox("", com_opcao_vazia(st.session_state.equipe["Equipe"]), label_visibility="collapsed")
 
@@ -83,7 +81,6 @@ if st.button("✅ Confirmar e Gerar Tabela"):
     col_w, col_p = st.columns(2)
 
     with col_w:
-        # WHATSAPP
         texto_whatsapp = f"🎵 *ESCALA SOM | MÍDIA | TRANSMISSÃO* 🎵\n\n"
         if e_geral != "-": texto_whatsapp += f"⭐ *Equipe:* {e_geral}\n\n"
         texto_whatsapp += f"📅 *Ensaio*\n- Som: {s_sex}\n\n"
@@ -93,44 +90,38 @@ if st.button("✅ Confirmar e Gerar Tabela"):
         st.markdown(f'<a href="{link_zap}" target="_blank"><button style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;">📲 Enviar WhatsApp</button></a>', unsafe_allow_html=True)
 
     with col_p:
-        # GERAR PDF
-        pdf = FPDF()
+        # --- PDF PERSONALIZADO (TAMANHO DA ESCALA) ---
+        # Definindo um tamanho menor: 150mm x 100mm (ideal para celular)
+        pdf = FPDF(format=(150, 100))
         pdf.add_page()
-        pdf.set_font("Arial", "B", 16)
+        pdf.set_font("Arial", "B", 14)
         
-        # Correção manual do título para o PDF
         titulo_pdf = "ESCALA SOM | MÍDIA | TRANSMISSÃO".encode('latin-1', 'replace').decode('latin-1')
-        pdf.cell(190, 10, titulo_pdf, ln=True, align="C")
+        pdf.cell(130, 8, titulo_pdf, ln=True, align="C")
         
-        pdf.ln(5)
+        pdf.ln(3)
         if e_geral != "-":
-            pdf.set_font("Arial", "B", 12)
+            pdf.set_font("Arial", "B", 11)
             equipe_txt = f"Equipe: {e_geral}".encode('latin-1', 'replace').decode('latin-1')
-            pdf.cell(190, 10, equipe_txt, ln=True, align="C")
-        pdf.ln(10)
+            pdf.cell(130, 8, equipe_txt, ln=True, align="C")
+        pdf.ln(5)
         
-        # Cabeçalho da Tabela
-        pdf.set_fill_color(200, 200, 200)
-        pdf.set_font("Arial", "B", 10)
+        # Tabela no PDF (larguras ajustadas para 130mm total)
+        pdf.set_fill_color(230, 230, 230)
+        pdf.set_font("Arial", "B", 9)
+        cols_pdf = [("Período", 35), ("Som", 30), ("Mídia", 30), ("Transmissão", 35)]
         
-        header_cols = ["Período", "Som", "Mídia", "Transmissão"]
-        for col in header_cols:
-            txt_col = col.encode('latin-1', 'replace').decode('latin-1')
-            pdf.cell(47.5, 10, txt_col, border=1, align="C", fill=True)
+        for col_name, width in cols_pdf:
+            txt = col_name.encode('latin-1', 'replace').decode('latin-1')
+            pdf.cell(width, 8, txt, border=1, align="C", fill=True)
         pdf.ln()
 
-        # Dados da Tabela
-        pdf.set_font("Arial", "", 10)
+        pdf.set_font("Arial", "", 9)
         for i in range(len(df)):
-            periodo = str(df.iloc[i,0]).encode('latin-1', 'replace').decode('latin-1')
-            som = str(df.iloc[i,1]).encode('latin-1', 'replace').decode('latin-1')
-            midia = str(df.iloc[i,3]).encode('latin-1', 'replace').decode('latin-1')
-            transm = str(df.iloc[i,2]).encode('latin-1', 'replace').decode('latin-1')
-            
-            pdf.cell(47.5, 10, periodo, border=1, align="C")
-            pdf.cell(47.5, 10, som, border=1, align="C")
-            pdf.cell(47.5, 10, midia, border=1, align="C")
-            pdf.cell(47.5, 10, transm, border=1, align="C")
+            pdf.cell(35, 8, str(df.iloc[i,0]).encode('latin-1', 'replace').decode('latin-1'), border=1, align="C")
+            pdf.cell(30, 8, str(df.iloc[i,1]).encode('latin-1', 'replace').decode('latin-1'), border=1, align="C")
+            pdf.cell(30, 8, str(df.iloc[i,3]).encode('latin-1', 'replace').decode('latin-1'), border=1, align="C")
+            pdf.cell(35, 8, str(df.iloc[i,2]).encode('latin-1', 'replace').decode('latin-1'), border=1, align="C")
             pdf.ln()
 
         pdf_bin = pdf.output(dest='S').encode('latin-1', 'replace')
