@@ -11,8 +11,8 @@ if 'equipe' not in st.session_state:
     st.session_state.equipe = {
         "Som": ["Marcelo", "Jessé", "Junior", "Paulo"],
         "Transmissão": ["Mel", "Pedro", "Jessé", "Junior", "Arthur", "Cláudia"],
-        "Mídia": ["Cláudia", "Sofia", "Gabriela", "Pedro", "Jessé", "Junior"],
-        "Equipe": ["Bruna", "Junior", "Fernanda", "Cláudia", "Cássio", "Manu", "Sofia", "Jovens"]
+        "Mídia": ["Cláudia", "Sophia", "Gabriela", "Pedro", "Jessé", "Junior"],
+        "Equipe": ["Bruna", "Junior", "Fernanda", "Cláudia", "Jovens"]
     }
 
 def com_opcao_vazia(lista):
@@ -39,15 +39,17 @@ with st.sidebar:
 
 # --- MONTAGEM DA ESCALA ---
 st.write("") 
-c_tit, c_sel = st.columns([0.2, 0.3, 0.5])
+
+# AJUSTE DE PROXIMIDADE: Colunas mais estreitas para o título e o seletor
+c_tit, c_sel, c_espaco = st.columns([0.18, 0.25, 0.57])
 with c_tit:
-    st.markdown('<p style="font-size: 16px; font-weight: bold; margin-top: 10px;">🗓️ Equipe:</p>', unsafe_allow_html=True)
+    st.markdown('<p style="font-size: 16px; font-weight: bold; margin-top: 10px; white-space: nowrap;">🗓️ Equipe da Semana:</p>', unsafe_allow_html=True)
 with c_sel:
     e_geral = st.selectbox("", com_opcao_vazia(st.session_state.equipe["Equipe"]), label_visibility="collapsed")
 
 st.divider()
 
-# Ajustei para 4 colunas agora
+# Layout de 4 colunas (Ensaio, Manhã, Noite, Evento)
 c1, c2, c3, c4 = st.columns(4)
 with c1:
     st.info("📅 Ensaio")
@@ -87,7 +89,6 @@ if st.button("✅ Confirmar e Gerar Tabela"):
     col_w, col_p = st.columns(2)
 
     with col_w:
-        # WHATSAPP ATUALIZADO
         texto_whatsapp = f"🎵 *ESCALA SOM | MÍDIA | TRANSMISSÃO* 🎵\n\n"
         if e_geral != "-": texto_whatsapp += f"⭐ *Equipe:* {e_geral}\n\n"
         texto_whatsapp += f"📅 *Ensaio*\n- Som: {s_sex}\n\n"
@@ -98,8 +99,8 @@ if st.button("✅ Confirmar e Gerar Tabela"):
         st.markdown(f'<a href="{link_zap}" target="_blank"><button style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;">📲 Enviar WhatsApp</button></a>', unsafe_allow_html=True)
 
     with col_p:
-        # --- PDF PERSONALIZADO (Ajustado para 4 linhas de dados) ---
-        pdf = FPDF(format=(150, 110)) # Aumentei um pouco a altura para caber a nova linha
+        # --- PDF PERSONALIZADO ---
+        pdf = FPDF(format=(150, 110))
         pdf.add_page()
         pdf.set_font("Arial", "B", 14)
         
@@ -123,7 +124,7 @@ if st.button("✅ Confirmar e Gerar Tabela"):
             pdf.cell(width, 8, txt, border=1, align="C", fill=True)
         pdf.ln()
 
-        # Dados da Tabela no PDF (Agora com 4 linhas)
+        # Dados da Tabela
         pdf.set_font("Arial", "", 9)
         for i in range(len(df)):
             pdf.cell(35, 8, str(df.iloc[i,0]).encode('latin-1', 'replace').decode('latin-1'), border=1, align="C")
