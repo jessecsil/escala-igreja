@@ -1,8 +1,9 @@
 import streamlit as st
 import pandas as pd
 import urllib.parse
+from io import BytesIO
 
-# Configuração básica
+# --- CONFIGURAÇÃO DO APP ---
 st.set_page_config(page_title="Escala Igreja", layout="wide", page_icon="🎵")
 
 # Inicialização da equipe
@@ -14,14 +15,13 @@ if 'equipe' not in st.session_state:
         "Equipe": ["Bruna", "Fernanda", "Junior", "Jovens"]
     }
 
-# Função simples para adicionar a opção em branco no topo
 def com_opcao_vazia(lista):
     return ["-"] + lista
 
-# --- TÍTULO PRINCIPAL REDUZIDO ---
+# --- TÍTULO DO SISTEMA ---
 st.markdown("### 🎵 Sistema de Escala - Som | Transmissão | Mídia")
 
-# --- BARRA LATERAL ---
+# --- BARRA LATERAL (GERENCIAMENTO) ---
 with st.sidebar:
     st.header("⚙️ Gerenciar Equipe")
     cat_add = st.selectbox("Área para Adicionar", ["Som", "Transmissão", "Mídia", "Equipe"], key="add_cat")
@@ -77,10 +77,9 @@ with c3:
     t_dom_n = st.selectbox("Transmissão", com_opcao_vazia(st.session_state.equipe["Transmissão"]), key="tn")
     m_dom_n = st.selectbox("Mídia", com_opcao_vazia(st.session_state.equipe["Mídia"]), key="mn")
 
-# --- VISUALIZAÇÃO E ENVIO ---
+# --- GERAÇÃO DA TABELA E ENVIO ---
 st.divider()
 if st.button("✅ Confirmar e Gerar Tabela"):
-    # Alterado para mostrar apenas o nome da equipe
     if e_geral != "-":
         st.markdown(f"#### Equipe: **{e_geral}**")
         
@@ -93,21 +92,36 @@ if st.button("✅ Confirmar e Gerar Tabela"):
     df = pd.DataFrame(dados)
     st.table(df)
 
-    # --- LÓGICA DO WHATSAPP ---
-    texto_whatsapp = f"🎵 *ESCALA MÍDIA E SOM* 🎵\n\n"
-    if e_geral != "-":
-        texto_whatsapp += f"⭐ *Equipe:* {e_geral}\n\n"
-    
-    texto_whatsapp += f"📅 *Ensaio*\n- Som: {s_sex}\n\n"
-    texto_whatsapp += f"☀️ *Domingo Manhã*\n- Som: {s_dom_m}\n- Transmissão: {t_dom_m}\n- Mídia: {m_dom_m}\n\n"
-    texto_whatsapp += f"🌙 *Domingo Noite*\n- Som: {s_dom_n}\n- Transmissão: {t_dom_n}\n- Mídia: {m_dom_n}"
+    # --- BOTÕES DE AÇÃO (WHATSAPP E DOWNLOAD) ---
+    col_w, col_d = st.columns([1, 1])
 
-    link_zap = f"https://wa.me/?text={urllib.parse.quote(texto_whatsapp)}"
-    
-    st.markdown(f"""
-        <a href="{link_zap}" target="_blank">
-            <button style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px;">
-                📲 Enviar Escala para o WhatsApp
-            </button>
-        </a>
-    """, unsafe_allow_html=True)
+    with col_w:
+        # WhatsApp
+        texto_whatsapp = f"🎵 *ESCALA MÍDIA E SOM* 🎵\n\n"
+        if e_geral != "-":
+            texto_whatsapp += f"⭐ *Equipe:* {e_geral}\n\n"
+        texto_whatsapp += f"📅 *Ensaio*\n- Som: {s_sex}\n\n"
+        texto_whatsapp += f"☀️ *Domingo Manhã*\n- Som: {s_dom_m}\n- Transmissão: {t_dom_m}\n- Mídia: {m_dom_m}\n\n"
+        texto_whatsapp += f"🌙 *Domingo Noite*\n- Som: {s_dom_n}\n- Transmissão: {t_dom_n}\n- Mídia: {m_dom_n}"
+
+        link_zap = f"https://wa.me/?text={urllib.parse.quote(texto_whatsapp)}"
+        st.markdown(f"""
+            <a href="{link_zap}" target="_blank">
+                <button style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;">
+                    📲 Enviar para WhatsApp
+                </button>
+            </a>
+        """, unsafe_allow_html=True)
+
+    with col_d:
+        # Download Excel
+        output = BytesIO()
+        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+            df.to_excel(writer, index=False, sheet_name='Escala')
+        
+        st.download_button(
+            label="💾 Baixar Escala (Excel)",
+            data=output.getvalue(),
+            file_name=f"Escala_{e_geral}.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
