@@ -97,30 +97,40 @@ if st.button("✅ Confirmar e Gerar Tabela"):
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Arial", "B", 16)
-        # Título do PDF atualizado
-        pdf.cell(190, 10, "ESCALA SOM | MIDIA | TRANSMISSAO".encode('latin-1', 'replace').decode('latin-1'), ln=True, align="C")
+        
+        # Correção manual do título para o PDF
+        titulo_pdf = "ESCALA SOM | MÍDIA | TRANSMISSÃO".encode('latin-1', 'replace').decode('latin-1')
+        pdf.cell(190, 10, titulo_pdf, ln=True, align="C")
+        
         pdf.ln(5)
         if e_geral != "-":
             pdf.set_font("Arial", "B", 12)
-            pdf.cell(190, 10, f"Equipe: {e_geral}".encode('latin-1', 'replace').decode('latin-1'), ln=True, align="C")
+            equipe_txt = f"Equipe: {e_geral}".encode('latin-1', 'replace').decode('latin-1')
+            pdf.cell(190, 10, equipe_txt, ln=True, align="C")
         pdf.ln(10)
         
         # Cabeçalho da Tabela
         pdf.set_fill_color(200, 200, 200)
         pdf.set_font("Arial", "B", 10)
-        pdf.cell(47.5, 10, "Período".encode('latin-1', 'replace').decode('latin-1'), border=1, align="C", fill=True)
-        pdf.cell(47.5, 10, "Som", border=1, align="C", fill=True)
-        pdf.cell(47.5, 10, "Mídia".encode('latin-1', 'replace').decode('latin-1'), border=1, align="C", fill=True)
-        pdf.cell(47.5, 10, "Transmissão".encode('latin-1', 'replace').decode('latin-1'), border=1, align="C", fill=True)
+        
+        header_cols = ["Período", "Som", "Mídia", "Transmissão"]
+        for col in header_cols:
+            txt_col = col.encode('latin-1', 'replace').decode('latin-1')
+            pdf.cell(47.5, 10, txt_col, border=1, align="C", fill=True)
         pdf.ln()
 
-        # Dados da Tabela (Ajustando a ordem das colunas no PDF também)
+        # Dados da Tabela
         pdf.set_font("Arial", "", 10)
         for i in range(len(df)):
-            pdf.cell(47.5, 10, str(df.iloc[i,0]).encode('latin-1', 'replace').decode('latin-1'), border=1, align="C") # Período
-            pdf.cell(47.5, 10, str(df.iloc[i,1]).encode('latin-1', 'replace').decode('latin-1'), border=1, align="C") # Som
-            pdf.cell(47.5, 10, str(df.iloc[i,3]).encode('latin-1', 'replace').decode('latin-1'), border=1, align="C") # Mídia
-            pdf.cell(47.5, 10, str(df.iloc[i,2]).encode('latin-1', 'replace').decode('latin-1'), border=1, align="C") # Transmissão
+            periodo = str(df.iloc[i,0]).encode('latin-1', 'replace').decode('latin-1')
+            som = str(df.iloc[i,1]).encode('latin-1', 'replace').decode('latin-1')
+            midia = str(df.iloc[i,3]).encode('latin-1', 'replace').decode('latin-1')
+            transm = str(df.iloc[i,2]).encode('latin-1', 'replace').decode('latin-1')
+            
+            pdf.cell(47.5, 10, periodo, border=1, align="C")
+            pdf.cell(47.5, 10, som, border=1, align="C")
+            pdf.cell(47.5, 10, midia, border=1, align="C")
+            pdf.cell(47.5, 10, transm, border=1, align="C")
             pdf.ln()
 
         pdf_bin = pdf.output(dest='S').encode('latin-1', 'replace')
